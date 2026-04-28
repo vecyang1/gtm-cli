@@ -154,12 +154,20 @@ export const tagsCommand = new Command()
 
       const tagmanager = await getTagManagerClient();
 
-      // Get current tag
+      // Get current tag — the GTM update endpoint is a full-resource PUT,
+      // so seed the body with the existing resource and overlay user changes on top.
       const current = await tagmanager.accounts.containers.workspaces.tags.get({
         path: `accounts/${accountId}/containers/${containerId}/workspaces/${workspaceId}/tags/${options.tagId}`,
       });
 
-      const requestBody: Record<string, unknown> = {};
+      const requestBody: Record<string, unknown> = { ...current.data };
+      delete requestBody.path;
+      delete requestBody.accountId;
+      delete requestBody.containerId;
+      delete requestBody.workspaceId;
+      delete requestBody.tagId;
+      delete requestBody.fingerprint;
+      delete requestBody.tagManagerUrl;
 
       if (options.name) {
         requestBody.name = options.name;
