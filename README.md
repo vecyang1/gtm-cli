@@ -63,6 +63,8 @@ deno run --allow-net --allow-read --allow-write --allow-env --allow-run \
   https://raw.githubusercontent.com/owntag/gtm-cli/main/src/main.ts
 ```
 
+> **Note:** Running directly from source does not include the OAuth credentials shipped with official releases. Either authenticate with a [service account](#option-2-service-account), or [provide your own OAuth client](#oauth-when-building-from-source) before running `gtm auth login`.
+
 ### Build from Source
 
 ```bash
@@ -71,6 +73,24 @@ cd gtm-cli
 deno task compile
 ./gtm --help
 ```
+
+> **Note:** Source builds do not include the OAuth credentials shipped with official releases. Either authenticate with a [service account](#option-2-service-account), or [provide your own OAuth client](#oauth-when-building-from-source) before running `gtm auth login`.
+
+#### OAuth when building from source
+
+If you want to use `gtm auth login` (browser-based OAuth) with a source build, you need to supply your own Google OAuth client:
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), create an OAuth 2.0 Client ID. Choose *Desktop app*, or *Web application* with `http://localhost:8085/callback` registered as an authorized redirect URI.
+2. Enable the Tag Manager API on the same project.
+3. Set the credentials before running the CLI — either as environment variables or in a `.env` file at the repo root:
+
+   ```bash
+   export GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
+   export GOOGLE_CLIENT_SECRET="your-client-secret"
+   gtm auth login
+   ```
+
+Alternatively, skip OAuth entirely and use a [service account](#option-2-service-account) — no redirect URI required.
 
 ## Quick Start
 
@@ -387,6 +407,7 @@ gtm completions fish > ~/.config/fish/completions/gtm.fish
 ## Environment Variables
 
 - `GOOGLE_APPLICATION_CREDENTIALS` - Path to service account key file (takes precedence over saved auth)
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` - Override the OAuth client used by `gtm auth login` (only needed for source builds; see [OAuth when building from source](#oauth-when-building-from-source))
 - `GTM_CLI_CONFIG_DIR` - Override configuration directory (default: `~/.config/gtm-cli`)
 - `NO_COLOR` - Disable colored output
 
