@@ -258,7 +258,7 @@ export async function login(): Promise<StoredCredentials> {
 
   // Create credentials object
   const credentials: StoredCredentials = {
-    accessToken: tokens.access_token,
+    accessToken: (tokens.access_token),
     refreshToken: tokens.refresh_token || "",
     expiresAt,
     tokenType: tokens.token_type,
@@ -321,7 +321,7 @@ export async function getAccessToken(): Promise<string> {
   // Update stored credentials
   const updatedCredentials: StoredCredentials = {
     ...credentials,
-    accessToken: tokens.access_token,
+    accessToken: (tokens.access_token),
     expiresAt: Date.now() + tokens.expires_in * 1000,
     // Keep existing refresh token if new one not provided
     refreshToken: tokens.refresh_token || credentials.refreshToken,
